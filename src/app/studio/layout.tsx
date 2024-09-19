@@ -1,16 +1,5 @@
 import React from "react";
-import {
-  Clock,
-  FileText,
-  HelpCircle,
-  Home,
-  LayoutGrid,
-  PenTool,
-  Search,
-  Settings,
-  User,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { FileText, Home, LayoutGrid, PenTool } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
