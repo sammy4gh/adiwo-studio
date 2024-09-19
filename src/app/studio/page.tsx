@@ -10,7 +10,6 @@ function Page() {
         <p className="mb-6 text-sm text-accent-foreground">
           Free • 205 MB used of 5 GB (4%)
         </p>
-
         <div className="mb-8 flex justify-between">
           <h2 className="text-xl font-semibold">Create New</h2>
           <div className="space-x-2">
