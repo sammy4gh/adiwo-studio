@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ThemeProvider } from "@/app/_components/theme-provider";

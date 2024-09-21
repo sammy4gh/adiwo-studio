@@ -14,7 +14,7 @@ export default function LandingPage() {
             Unleash your creativity with our powerful tools.
           </p>
           <Button asChild size="lg">
-            <Link href="/studio">
+            <Link href="/studio/dashbaord">
               Enter Studio
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
