@@ -4,6 +4,7 @@ import { Calendar, luxonLocalizer, View, Views } from "react-big-calendar";
 import { DateTime } from "luxon";
 import { useSearchParams } from "next/navigation";
 import { useAppSearchParams } from "@/app/hooks/use-app-search-params";
+import CalenderEvent from "@/app/studio/event/_components/calender-event";
 
 export default function EventCalender() {
   const localizer = luxonLocalizer(DateTime);
@@ -29,7 +30,34 @@ export default function EventCalender() {
         ]}
         step={60}
         onView={onView}
+        components={{
+          event: CalenderEvent,
+        }}
+        events={events}
       />
     </div>
   );
 }
+
+const events = [
+  {
+    title: " Event",
+    start: DateTime.local().toJSDate(),
+    end: DateTime.local().plus({ hour: 3 }).toJSDate(),
+  },
+  {
+    title: "Long Event",
+    start: DateTime.local().plus({ days: 5 }).toJSDate(),
+    end: DateTime.local().plus({ days: 6 }).toJSDate(),
+  },
+  {
+    title: "Meeting",
+    start: DateTime.local().plus({ days: 3 }).toJSDate(),
+    end: DateTime.local().plus({ days: 3, hour: 5 }).toJSDate(),
+  },
+  {
+    title: "Conference",
+    start: DateTime.local().plus({ days: 1 }).toJSDate(),
+    end: DateTime.local().toJSDate(),
+  },
+];
