@@ -1,6 +1,12 @@
 "use client";
 import React, { Fragment, useMemo, useState } from "react";
-import { Calendar, luxonLocalizer, View, Views } from "react-big-calendar";
+import {
+  Calendar,
+  EventProps,
+  luxonLocalizer,
+  View,
+  Views,
+} from "react-big-calendar";
 import { DateTime } from "luxon";
 import { useSearchParams } from "next/navigation";
 import { useAppSearchParams } from "@/app/hooks/use-app-search-params";
@@ -17,10 +23,10 @@ export default function EventCalender() {
   return (
     <div className="h-screen">
       <Calendar
-        key={searchParams.toString()}
+        key={searchParams.toString() || ""}
         localizer={localizer}
         defaultDate={defaultDate}
-        defaultView={searchParams.get("view") as View}
+        defaultView={(searchParams.get("view") as View) || Views.WEEK}
         views={[
           Views.MONTH,
           Views.WEEK,
@@ -39,9 +45,9 @@ export default function EventCalender() {
   );
 }
 
-const events = [
+const events: EventProps["event"][] = [
   {
-    title: " Event",
+    title: "Event",
     start: DateTime.local().toJSDate(),
     end: DateTime.local().plus({ hour: 3 }).toJSDate(),
   },
