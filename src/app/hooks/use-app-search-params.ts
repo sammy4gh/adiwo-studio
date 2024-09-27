@@ -11,7 +11,7 @@ export function useAppSearchParams() {
   const setSearchParam = (
     queryParams: Record<string, string | null | undefined>,
   ) => {
-    const params = new URLSearchParams(searchParams!);
+    const params = new URLSearchParams(searchParams);
     for (const [key, value] of Object.entries(queryParams)) {
       if (value) {
         params.set(key, value);
