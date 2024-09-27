@@ -11,6 +11,8 @@ import { DateTime } from "luxon";
 import { useSearchParams } from "next/navigation";
 import { useAppSearchParams } from "@/app/hooks/use-app-search-params";
 import CalenderEvent from "@/app/studio/event/_components/calender-event";
+import FloatingButton from "@/components/floating-button";
+import { EventDrawer } from "@/components/event-drawer";
 
 export default function EventCalender() {
   const localizer = luxonLocalizer(DateTime);
@@ -20,10 +22,14 @@ export default function EventCalender() {
     setSearchParam({ view: view });
   };
 
+  const onFloatingButtonClick = () => {
+    setSearchParam({ eventId: "0" });
+  };
+
   return (
     <div className="h-screen">
       <Calendar
-        key={searchParams.toString() || ""}
+        key={searchParams.toString()}
         localizer={localizer}
         defaultDate={defaultDate}
         defaultView={(searchParams.get("view") as View) || Views.WEEK}
@@ -40,6 +46,13 @@ export default function EventCalender() {
           event: CalenderEvent,
         }}
         events={events}
+      />
+      <FloatingButton onClick={onFloatingButtonClick} />
+      <EventDrawer
+        isOpen={searchParams.get("eventId") === "0"}
+        setIsOpen={(open) => {
+          setSearchParam({ eventId: open ? "0" : null });
+        }}
       />
     </div>
   );
