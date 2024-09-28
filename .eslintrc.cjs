@@ -38,7 +38,14 @@ const config = {
           "attributes": false
         }
       }
-    ]
+    ],
+    "@typescript-eslint/prefer-nullish-coalescing" : [
+        "warn",
+        {
+            "forceSuggestionFixer": true
+        }
+        ],
+
   }
 }
 module.exports = config;
