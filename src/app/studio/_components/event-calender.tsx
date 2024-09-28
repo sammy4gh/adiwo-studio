@@ -12,7 +12,8 @@ import { useSearchParams } from "next/navigation";
 import { useAppSearchParams } from "@/app/hooks/use-app-search-params";
 import CalenderEvent from "@/app/studio/event/_components/calender-event";
 import FloatingButton from "@/components/floating-button";
-import { EventDrawer } from "@/components/event-drawer";
+import { EventDrawer } from "@/app/studio/event/_components/event-drawer";
+import ShadcnBigCalendar from "@/components/shardcn-big-calender/shadcn-big-calendar";
 
 export default function EventCalender() {
   const localizer = luxonLocalizer(DateTime);
@@ -28,7 +29,7 @@ export default function EventCalender() {
 
   return (
     <div className="h-screen">
-      <Calendar
+      <ShadcnBigCalendar
         key={searchParams.toString()}
         localizer={localizer}
         defaultDate={defaultDate}
@@ -42,9 +43,6 @@ export default function EventCalender() {
         ]}
         step={60}
         onView={onView}
-        components={{
-          event: CalenderEvent,
-        }}
         events={events}
       />
       <FloatingButton onClick={onFloatingButtonClick} />
@@ -60,7 +58,7 @@ export default function EventCalender() {
 
 const events: EventProps["event"][] = [
   {
-    title: "Event",
+    title: "Introduction to Programming",
     start: DateTime.local().toJSDate(),
     end: DateTime.local().plus({ hour: 3 }).toJSDate(),
   },

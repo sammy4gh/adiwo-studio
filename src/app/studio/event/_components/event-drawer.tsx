@@ -8,6 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import EventForm from "@/app/studio/event/_components/event-form";
 
 type Props = {
   isOpen?: boolean;
@@ -16,10 +17,10 @@ type Props = {
 
 export function EventDrawer({ isOpen, setIsOpen }: Props) {
   return (
-    <div className="relative min-h-screen">
+    <div className="h-scre relative">
       {/* Drawer */}
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="right">
+        <SheetContent side="right" className={"min-w-[calc(100vw/2)]"}>
           <SheetHeader>
             <SheetTitle>Drawer Content</SheetTitle>
             <SheetDescription>
@@ -27,7 +28,7 @@ export function EventDrawer({ isOpen, setIsOpen }: Props) {
             </SheetDescription>
           </SheetHeader>
           <div className="py-4">
-            <p>You can add any content here.</p>
+            <EventForm />
           </div>
         </SheetContent>
       </Sheet>
