@@ -16,7 +16,7 @@ function FloatingButton({ onClick, children, className }: Props) {
       onClick={onClick}
       aria-label="floating button"
     >
-      {children || <Plus className="h-6 w-6" />}
+      {children ?? <Plus className="h-6 w-6" />}
     </Button>
   );
 }
