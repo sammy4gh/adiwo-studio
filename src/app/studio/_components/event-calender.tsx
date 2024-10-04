@@ -1,31 +1,20 @@
 "use client";
-import React, { Fragment, useMemo, useState } from "react";
-import {
-  Calendar,
-  EventProps,
-  luxonLocalizer,
-  View,
-  Views,
-} from "react-big-calendar";
+import React from "react";
+import { EventProps, luxonLocalizer, View, Views } from "react-big-calendar";
 import { DateTime } from "luxon";
-import { useSearchParams } from "next/navigation";
 import { useAppSearchParams } from "@/app/hooks/use-app-search-params";
-import CalenderEvent from "@/app/studio/event/_components/calender-event";
 import FloatingButton from "@/components/floating-button";
 import { EventDrawer } from "@/app/studio/event/_components/event-drawer";
 import ShadcnBigCalendar from "@/components/shardcn-big-calender/shadcn-big-calendar";
+import { useQueryState } from "nuqs";
 
 export default function EventCalender() {
+  const [eventId, setEventId] = useQueryState("eventId");
+  const [milestoneId, setMilestoneId] = useQueryState("milestoneId");
+  const [view, setView] = useQueryState("view");
   const localizer = luxonLocalizer(DateTime);
   const defaultDate = DateTime.local().toJSDate();
   const { setSearchParam, searchParams } = useAppSearchParams();
-  const onView = (view: View) => {
-    setSearchParam({ view: view });
-  };
-
-  const onFloatingButtonClick = () => {
-    setSearchParam({ eventId: "0" });
-  };
 
   return (
     <div className="h-screen">
@@ -33,7 +22,7 @@ export default function EventCalender() {
         key={searchParams.toString()}
         localizer={localizer}
         defaultDate={defaultDate}
-        defaultView={(searchParams.get("view") as View) || Views.WEEK}
+        defaultView={(view as View) || Views.WEEK}
         views={[
           Views.MONTH,
           Views.WEEK,
@@ -42,14 +31,27 @@ export default function EventCalender() {
           Views.AGENDA,
         ]}
         step={60}
-        onView={onView}
+        onView={setView}
         events={events}
       />
-      <FloatingButton onClick={onFloatingButtonClick} variant={"default"} />
+      <FloatingButton
+        onClick={() => setEventId("undefined")}
+        variant={"default"}
+      />
       <EventDrawer
-        isOpen={searchParams.get("eventId") === "0"}
+        isOpen={!!eventId}
         setIsOpen={(open) => {
-          setSearchParam({ eventId: open ? "0" : null });
+          if (!open) {
+            setEventId(null);
+          }
+        }}
+      />
+      <EventDrawer
+        isOpen={!!milestoneId}
+        setIsOpen={(open) => {
+          if (!open) {
+            setMilestoneId(null);
+          }
         }}
       />
     </div>
