@@ -45,7 +45,7 @@ export default function EventCalender() {
         onView={onView}
         events={events}
       />
-      <FloatingButton onClick={onFloatingButtonClick} />
+      <FloatingButton onClick={onFloatingButtonClick} variant={"default"} />
       <EventDrawer
         isOpen={searchParams.get("eventId") === "0"}
         setIsOpen={(open) => {
