@@ -105,11 +105,18 @@ export const LinguaDateTimePicker = forwardRef<
       e.preventDefault();
       setSelectedIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
     } else if (e.key === "Enter" && isOpen && suggestions.length > 0) {
-      e.preventDefault();
-      const dateStr = generateDateString(suggestions[selectedIndex].date);
-      setInputValue(dateStr);
-      setDateTime(suggestions[selectedIndex].date);
-      closeDropdown();
+      if (
+        e.key === "Enter" &&
+        isOpen &&
+        suggestions.length > 0 &&
+        suggestions[selectedIndex]
+      ) {
+        e.preventDefault();
+        const dateStr = generateDateString(suggestions[selectedIndex].date);
+        setInputValue(dateStr);
+        setDateTime(suggestions[selectedIndex].date);
+        closeDropdown();
+      }
     } else if (e.key === "Escape") {
       closeDropdown();
     }
