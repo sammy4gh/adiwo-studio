@@ -4,7 +4,7 @@ import EventCalender from "@/app/studio/_components/event-calender";
 function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <EventCalender />;
+      <EventCalender />
     </Suspense>
   );
 }
