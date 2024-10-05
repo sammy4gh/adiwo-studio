@@ -3,8 +3,8 @@ import { useFieldArray, useForm } from "react-hook-form";
 import {
   eventSchema,
   EventSchemaType,
-  repeatPresets,
   MilestonePresetsSchemaType,
+  repeatPresets,
 } from "@/types/schemas/event-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DateTime } from "luxon";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DateTimePicker, TimePicker } from "@/components/datetime-picker";
+import { DateTimePicker } from "@/components/datetime-picker";
 import { AutosizeTextarea } from "@/components/autosize-textarea";
 import {
   Select,
@@ -27,17 +27,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Delete, Pencil, Plus, Send, Trash, Trash2 } from "lucide-react";
+import { Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { nextMilestoneDate } from "@/app/studio/event/lip/utils";
-import { Textarea } from "@/components/ui/textarea";
-import { LinguaDateTimePicker } from "@/components/lingua-time/lingua-date-time-picker";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useQueryState } from "nuqs";
-import { EventDrawer } from "@/app/studio/event/_components/event-drawer";
+
+type EventFormProps = {
+  id?: string;
+};
 
 function EventForm() {
   const [milestoneId, setMilestoneId] = useQueryState("milestoneId");
