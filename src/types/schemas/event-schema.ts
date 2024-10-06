@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { DateTime } from "luxon";
+import {
+  toTypedRxJsonSchema,
+  ExtractDocumentTypeFromTypedRxJsonSchema,
+  RxJsonSchema,
+  RxDocument,
+  RxCollection,
+} from "rxdb";
 
 export const repeatPresets = [
   "daily",
@@ -37,3 +44,6 @@ export const eventSchema: z.ZodSchema = z.lazy(
 );
 
 export type EventSchemaType = z.infer<typeof eventSchema>;
+export type UpdateEventSchemaType = z.infer<typeof eventSchema> & {
+  id: string;
+};
