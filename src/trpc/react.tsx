@@ -4,11 +4,15 @@ import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
 import { createQueryClient } from "./query-client";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Provider } from "rxdb-hooks";
+import { initDatabase } from "@/app/database/database";
+import { ClientDatabaseType } from "@/app/database/database-schema";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -60,11 +64,27 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
     }),
   );
 
+  const [db, setDb] = React.useState<ClientDatabaseType>();
+
+  useEffect(() => {
+    // RxDB instantiation can be asynchronous
+    initDatabase().then(setDb);
+  }, []);
+
+  // Until db becomes available, consumer hooks that
+  // depend on it will still work, absorbing the delay
+  // by setting their state to isFetching:true
+
   return (
     <QueryClientProvider client={queryClient}>
       <api.Provider client={trpcClient} queryClient={queryClient}>
-        {props.children}
+        <Provider db={db}>{props.children}</Provider>
       </api.Provider>
+      <ReactQueryDevtools
+        position={"left"}
+        initialIsOpen={false}
+        buttonPosition={"bottom-left"}
+      />
     </QueryClientProvider>
   );
 }

@@ -1,5 +1,7 @@
-import { RxCollection, RxDatabase, RxDocument } from "rxdb";
+import { createRxDatabase, RxCollection, RxDatabase, RxDocument } from "rxdb";
 import { EventSchemaType } from "@/types/schemas/event-schema";
+import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
+import relationships from "dexie-relationships";
 
 export type EventDocType = EventSchemaType & { id: string };
 
@@ -20,7 +22,7 @@ export type EventCollectionType = RxCollection<
 >;
 
 export type DatabaseCollectionsType = {
-  events: EventCollectionType;
+  event: EventCollectionType;
 };
 
 export type ClientDatabaseType = RxDatabase<DatabaseCollectionsType>;

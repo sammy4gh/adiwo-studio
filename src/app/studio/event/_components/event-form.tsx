@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -35,6 +36,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useQueryState } from "nuqs";
+import { api } from "@/trpc/react";
+import { useRxCollection, useRxData } from "rxdb-hooks";
+import { EventCollectionType } from "@/app/database/database-schema";
 
 type EventFormProps = {
   id?: string;
@@ -42,6 +46,9 @@ type EventFormProps = {
 
 function EventForm() {
   const [milestoneId, setMilestoneId] = useQueryState("milestoneId");
+
+  const eventCollection = useRxCollection<EventCollectionType>("events");
+
   const form = useForm<EventSchemaType>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -51,12 +58,6 @@ function EventForm() {
       endTime: DateTime.local().plus({ hour: 1 }).toJSDate(),
     },
   });
-
-  const onSubmit = (data: EventSchemaType) => {
-    console.log(data);
-  };
-
-  //milesone array form filed
 
   const {
     fields: milestones,
@@ -71,12 +72,32 @@ function EventForm() {
   } = useFieldArray({
     control: form.control,
     name: "milestones",
+    keyName: "_id",
   });
+  const formValues = form.watch();
+  const onSubmit = async () => {
+    //make date utc string
+    const data = {
+      ...formValues,
+      startDate: formValues.startDate.toUTCString(),
+      endDate: formValues.endDate.toUTCString(),
+      startTime: formValues.startTime.toUTCString(),
+      endTime: formValues.endTime.toUTCString(),
+    };
+
+    try {
+      console.log("data", data);
+      const event = await eventCollection?.insert(data);
+      console.log("added event", event);
+    } catch (error) {
+      console.error("Error adding event", error);
+    }
+  };
 
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className={"space-y-8"}>
+        <form className={"space-y-8"} method={"post"}>
           <FormField
             control={form.control}
             name="title"
@@ -172,16 +193,11 @@ function EventForm() {
                     <Input
                       type="time"
                       {...field}
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString().split("T")[0]
-                          : field.value
-                      }
-                      defaultValue={
-                        field.value instanceof Date
-                          ? field.value.toISOString().split("T")[0]
-                          : field.value
-                      }
+                      // value={
+                      //   field.value instanceof Date
+                      //     ? field.value.toISOString().split("T")[0]
+                      //     : field.value
+                      // }
                     />
                   </FormControl>
                   <FormMessage />
@@ -198,11 +214,11 @@ function EventForm() {
                     <Input
                       type="time"
                       {...field}
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString().split("T")[0]
-                          : field.value
-                      }
+                      // value={
+                      //   field.value instanceof Date
+                      //     ? field.value.toISOString().split("T")[0]
+                      //     : field.value
+                      // }
                     />
                   </FormControl>
                   <FormMessage />
@@ -304,7 +320,7 @@ function EventForm() {
             <div className="items-end space-y-4">
               {milestones.map((milestone, index) => (
                 <div
-                  key={milestone.id}
+                  key={milestone._id}
                   className="flex items-end justify-evenly gap-4"
                 >
                   {/*Select for week numbers based on mistonelist*/}
@@ -360,7 +376,7 @@ function EventForm() {
               ))}
             </div>
           </section>
-          <Button type="submit">
+          <Button type="button" onClick={onSubmit}>
             <Send className={"mr-2"} size={16} />
             Submit
           </Button>

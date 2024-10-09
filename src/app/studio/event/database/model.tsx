@@ -1,26 +1,18 @@
+//RXDB schema
 import {
   ClientDatabaseType,
-  DatabaseCollectionsType,
   EventCollectionMethods,
   EventCollectionType,
   EventDocMethodsType,
   EventDocType,
   EventDocument,
 } from "@/app/database/database-schema";
-import { createRxDatabase, RxJsonSchema } from "rxdb";
-import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { EventSchemaType, repeatPresets } from "@/types/schemas/event-schema";
-import relationships from "dexie-relationships";
+import { RxJsonSchema } from "rxdb";
+import { repeatPresets } from "@/types/schemas/event-schema";
+import { useRxDB } from "rxdb-hooks";
 
-const database: ClientDatabaseType =
-  await createRxDatabase<DatabaseCollectionsType>({
-    name: "db",
-    storage: getRxStorageDexie({
-      addons: [relationships],
-    }),
-  });
+//const database: ClientDatabaseType = useRxDB();
 
-//RXDB schema
 export const clientDbEventSchema: RxJsonSchema<EventDocType> = {
   title: "event schema",
   version: 0,
@@ -92,37 +84,26 @@ export const clientDbEventSchema: RxJsonSchema<EventDocType> = {
   },
   required: ["title", "startDate", "endDate", "startTime", "endTime"],
 };
-
-const eventDocMethods: EventDocMethodsType = {
+export const eventDocMethods: EventDocMethodsType = {
   eventTitle: function (this: EventDocument, name: string) {
     return this.title;
   },
 };
-const eventCollectionMethods: EventCollectionMethods = {
+export const eventCollectionMethods: EventCollectionMethods = {
   countAllDocuments: async function (this: EventCollectionType) {
     const allDocs = await this.find().exec();
     return allDocs.length;
   },
 };
 
-await database.addCollections({
-  events: {
-    schema: clientDbEventSchema,
-    methods: eventDocMethods,
-    statics: eventCollectionMethods,
-  },
-});
-
-//postInsert hook
-database.events.postInsert(
-  function (
-    this: EventCollectionType, // own collection is bound to the scope
-    docData: EventDocType, // documents data
-    doc: EventDocument, // RxDocument
-  ) {
-    console.log("insert to " + this.name + "-collection: " + doc.title);
-  },
-  false, //not async
-);
-
-const allEvents = await database.events.find().exec();
+// //postInsert hook
+// database.event.postInsert(
+//   function (
+//     this: EventCollectionType, // own collection is bound to the scope
+//     docData: EventDocType, // documents data
+//     doc: EventDocument, // RxDocument
+//   ) {
+//     console.log("insert to " + this.name + "-collection: " + doc.title);
+//   },
+//   false, //not async
+// );

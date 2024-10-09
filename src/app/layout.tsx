@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { ThemeProvider } from "@/app/_components/theme-provider";
 import Header from "@/app/_components/header";
+import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata: Metadata = {
   title: "Adiwo Studio",
@@ -14,13 +15,17 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // addRxPlugin(RxDBDevModePlugin);
+
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <ThemeProvider attribute="class" defaultTheme={"system"} enableSystem>
-          <Header />
-          {children}
-        </ThemeProvider>
+        <TRPCReactProvider>
+          <ThemeProvider attribute="class" defaultTheme={"system"} enableSystem>
+            <Header />
+            {children}
+          </ThemeProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

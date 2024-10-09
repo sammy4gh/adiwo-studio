@@ -7,6 +7,7 @@ import FloatingButton from "@/components/floating-button";
 import { EventDrawer } from "@/app/studio/event/_components/event-drawer";
 import ShadcnBigCalendar from "@/components/shardcn-big-calender/shadcn-big-calendar";
 import { useQueryState } from "nuqs";
+import { api } from "@/trpc/react";
 
 export default function EventCalender() {
   const [eventId, setEventId] = useQueryState("eventId");
@@ -15,6 +16,8 @@ export default function EventCalender() {
   const localizer = luxonLocalizer(DateTime);
   const defaultDate = DateTime.local().toJSDate();
   const { setSearchParam, searchParams } = useAppSearchParams();
+
+  //const allEvents = api.event.all.useQuery();
 
   return (
     <div className="h-screen">
