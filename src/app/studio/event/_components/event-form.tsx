@@ -1,14 +1,9 @@
-"use client";
-import React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import {
-  eventSchema,
-  EventSchemaType,
-  MilestonePresetsSchemaType,
-  repeatPresets,
-} from "@/types/schemas/event-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { DateTime } from "luxon";
+'use client'
+import { EventCollectionType } from '@/app/database/database-schema'
+import { nextMilestoneDate } from '@/app/studio/event/lip/utils'
+import { AutosizeTextarea } from '@/components/autosize-textarea'
+import { DateTimePicker } from '@/components/datetime-picker'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -16,38 +11,43 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { DateTimePicker } from "@/components/datetime-picker";
-import { AutosizeTextarea } from "@/components/autosize-textarea";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Pencil, Plus, Send, Trash2 } from "lucide-react";
-import { nextMilestoneDate } from "@/app/studio/event/lip/utils";
+} from '@/components/ui/select'
+import { api } from '@/trpc/react'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useQueryState } from "nuqs";
-import { api } from "@/trpc/react";
-import { useRxCollection, useRxData } from "rxdb-hooks";
-import { EventCollectionType } from "@/app/database/database-schema";
+  EventSchemaType,
+  MilestonePresetsSchemaType,
+  eventSchema,
+  repeatPresets,
+} from '@/types/schemas/event-schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Pencil, Plus, Send, Trash2 } from 'lucide-react'
+import { DateTime } from 'luxon'
+import { useQueryState } from 'nuqs'
+import React from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { useRxCollection, useRxData } from 'rxdb-hooks'
 
 type EventFormProps = {
-  id?: string;
-};
+  id?: string
+}
 
 function EventForm() {
-  const [milestoneId, setMilestoneId] = useQueryState("milestoneId");
+  const [milestoneId, setMilestoneId] = useQueryState('milestoneId')
 
-  const eventCollection = useRxCollection<EventCollectionType>("events");
+  const eventCollection = useRxCollection<EventCollectionType>('events')
 
   const form = useForm<EventSchemaType>({
     resolver: zodResolver(eventSchema),
@@ -57,7 +57,7 @@ function EventForm() {
       startTime: DateTime.local().toJSDate(),
       endTime: DateTime.local().plus({ hour: 1 }).toJSDate(),
     },
-  });
+  })
 
   const {
     fields: milestones,
@@ -71,10 +71,10 @@ function EventForm() {
     replace: replaceMilestone,
   } = useFieldArray({
     control: form.control,
-    name: "milestones",
-    keyName: "_id",
-  });
-  const formValues = form.watch();
+    name: 'milestones',
+    keyName: '_id',
+  })
+  const formValues = form.watch()
   const onSubmit = async () => {
     //make date utc string
     const data = {
@@ -83,21 +83,21 @@ function EventForm() {
       endDate: formValues.endDate.toUTCString(),
       startTime: formValues.startTime.toUTCString(),
       endTime: formValues.endTime.toUTCString(),
-    };
+    }
 
     try {
-      console.log("data", data);
-      const event = await eventCollection?.insert(data);
-      console.log("added event", event);
+      console.log('data', data)
+      const event = await eventCollection?.insert(data)
+      console.log('added event', event)
     } catch (error) {
-      console.error("Error adding event", error);
+      console.error('Error adding event', error)
     }
-  };
+  }
 
   return (
     <>
       <Form {...form}>
-        <form className={"space-y-8"} method={"post"}>
+        <form className={'space-y-8'} method={'post'}>
           <FormField
             control={form.control}
             name="title"
@@ -125,9 +125,9 @@ function EventForm() {
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder={"When should it start"}
-                      granularity={"day"}
-                      displayFormat={{ hour24: "EEE, MMMM dd, yyyy" }}
+                      placeholder={'When should it start'}
+                      granularity={'day'}
+                      displayFormat={{ hour24: 'EEE, MMMM dd, yyyy' }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -144,9 +144,9 @@ function EventForm() {
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder={"When should it start"}
-                      granularity={"day"}
-                      displayFormat={{ hour24: "EEE, MMMM dd, yyyy" }}
+                      placeholder={'When should it start'}
+                      granularity={'day'}
+                      displayFormat={{ hour24: 'EEE, MMMM dd, yyyy' }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,7 +154,7 @@ function EventForm() {
               )}
             />
           </div>
-          <div className={"flex justify-between gap-4"}>
+          <div className={'flex justify-between gap-4'}>
             <FormField
               control={form.control}
               name="milestonePreset"
@@ -162,13 +162,13 @@ function EventForm() {
                 <FormItem>
                   <FormLabel>Repeat</FormLabel>
                   <FormControl>
-                    <Select {...field} defaultValue={"weekly"}>
+                    <Select {...field} defaultValue={'weekly'}>
                       <FormControl>
-                        <SelectTrigger className={"capitalize"}>
+                        <SelectTrigger className={'capitalize'}>
                           <SelectValue placeholder="Milestone steps" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className={"capitalize"}>
+                      <SelectContent className={'capitalize'}>
                         {repeatPresets.map(
                           (preset: MilestonePresetsSchemaType) => (
                             <SelectItem key={preset} value={preset}>
@@ -237,14 +237,14 @@ function EventForm() {
                   <AutosizeTextarea
                     id="bio"
                     {...field}
-                    placeholder={"How will you describe this event"}
+                    placeholder={'How will you describe this event'}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <section className={"flex flex-col gap-4"}>
+          <section className={'flex flex-col gap-4'}>
             <div className="flex items-end gap-2">
               {/*  TODO: MOVE PRESET TO BASE OF FORM AND USE SAME FOR MILESTONES BUT ALLOW USER TO OVERRIDE*/}
               {/*    Milestone preset select*/}
@@ -255,9 +255,9 @@ function EventForm() {
                   <FormItem>
                     <FormLabel>Milestones</FormLabel>
                     <FormControl>
-                      <Select {...field} defaultValue={"weekly"}>
+                      <Select {...field} defaultValue={'weekly'}>
                         <FormControl>
-                          <SelectTrigger className={"capitalize"}>
+                          <SelectTrigger className={'capitalize'}>
                             <SelectValue placeholder="Milestone steps" />
                           </SelectTrigger>
                         </FormControl>
@@ -278,11 +278,11 @@ function EventForm() {
               />
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button type="button" size={"icon"} variant={"outline"}>
+                  <Button type="button" size={'icon'} variant={'outline'}>
                     <Plus />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className={"flex flex-col gap-2"}>
+                <PopoverContent className={'flex flex-col gap-2'}>
                   {/* Form field for new milestone name only */}
                   <FormField
                     control={form.control}
@@ -302,15 +302,15 @@ function EventForm() {
                     onClick={() => {
                       addMilestone({
                         date: nextMilestoneDate(
-                          form.getValues("milestonePreset"),
+                          form.getValues('milestonePreset'),
                         ),
-                        title: form.getValues("newMilestone"),
-                      });
-                      form.setValue("newMilestone", ""); // Clear the input field after adding
-                      setMilestoneId("undefined");
+                        title: form.getValues('newMilestone'),
+                      })
+                      form.setValue('newMilestone', '') // Clear the input field after adding
+                      setMilestoneId('undefined')
                     }}
                   >
-                    <Plus size={16} className={"mr-2"} />
+                    <Plus size={16} className={'mr-2'} />
                     Add
                   </Button>
                 </PopoverContent>
@@ -334,9 +334,9 @@ function EventForm() {
                           <DateTimePicker
                             value={field.value}
                             onChange={field.onChange}
-                            placeholder={"When should it start"}
-                            granularity={"day"}
-                            displayFormat={{ hour24: "EEE, MMMM dd, yyyy" }}
+                            placeholder={'When should it start'}
+                            granularity={'day'}
+                            displayFormat={{ hour24: 'EEE, MMMM dd, yyyy' }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -347,7 +347,7 @@ function EventForm() {
                     control={form.control}
                     name={`milestones.${index}.title`}
                     render={({ field }) => (
-                      <FormItem className={"flex-1"}>
+                      <FormItem className={'flex-1'}>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
                           <Input placeholder="Title" {...field} />
@@ -356,20 +356,20 @@ function EventForm() {
                       </FormItem>
                     )}
                   />
-                  <div className={"flex gap-2"}>
+                  <div className={'flex gap-2'}>
                     <Button
                       type="button"
-                      variant={"ghost"}
+                      variant={'ghost'}
                       onClick={() => removeMilestone(index)}
                     >
-                      <Pencil size={16} className={"mr-2"} />
+                      <Pencil size={16} className={'mr-2'} />
                     </Button>
                     <Button
                       type="button"
-                      variant={"ghost"}
+                      variant={'ghost'}
                       onClick={() => removeMilestone(index)}
                     >
-                      <Trash2 size={16} className={"mr-2"} />
+                      <Trash2 size={16} className={'mr-2'} />
                     </Button>
                   </div>
                 </div>
@@ -377,13 +377,13 @@ function EventForm() {
             </div>
           </section>
           <Button type="button" onClick={onSubmit}>
-            <Send className={"mr-2"} size={16} />
+            <Send className={'mr-2'} size={16} />
             Submit
           </Button>
         </form>
       </Form>
     </>
-  );
+  )
 }
 
-export default EventForm;
+export default EventForm
